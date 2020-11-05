@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/determined-ai/determined/master/internal/db"
+	"github.com/determined-ai/determined/master/internal/sproto"
 	"github.com/determined-ai/determined/master/pkg/actor"
 	"github.com/determined-ai/determined/master/pkg/archive"
 	"github.com/determined-ai/determined/master/pkg/model"
@@ -75,6 +76,10 @@ func parseCommandRequest(
 	agentUserGroup, err := db.AgentUserGroup(user.ID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot find user and group information for user %s", user.Username)
+	}
+
+	if err := sproto.ValidateRP(config.Resources.ResourcePool); err != nil {
+		return nil, err
 	}
 
 	return &commandRequest{

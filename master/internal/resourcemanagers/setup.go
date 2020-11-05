@@ -8,7 +8,7 @@ import (
 
 	"github.com/determined-ai/determined/master/internal/agent"
 	"github.com/determined-ai/determined/master/internal/kubernetes"
-
+	"github.com/determined-ai/determined/master/internal/sproto"
 	"github.com/determined-ai/determined/master/pkg/actor"
 )
 
@@ -34,6 +34,7 @@ func Setup(
 	if !ok {
 		panic("cannot create resource managers")
 	}
+	sproto.SetRM(rm)
 	return rm
 }
 

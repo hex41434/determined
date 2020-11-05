@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 
+	"github.com/determined-ai/determined/master/internal/sproto"
 	"github.com/determined-ai/determined/master/pkg/actor"
 	"github.com/determined-ai/determined/master/pkg/actor/api"
 	"github.com/determined-ai/determined/master/pkg/check"
@@ -13,16 +14,14 @@ import (
 )
 
 // Initialize creates a new global agent actor.
-func Initialize(system *actor.System, e *echo.Echo, c *actor.Ref) {
-	_, ok := system.ActorOf(actor.Addr("agents"), &agents{cluster: c})
+func Initialize(system *actor.System, e *echo.Echo, _ *actor.Ref) {
+	_, ok := system.ActorOf(actor.Addr("agents"), &agents{})
 	check.Panic(check.True(ok, "agents address already taken"))
 	// Route /agents and /agents/<agent id>/slots to the agents actor and slots actors.
 	e.Any("/agents*", api.Route(system, nil))
 }
 
-type agents struct {
-	cluster *actor.Ref
-}
+type agents struct{}
 
 type agentsSummary map[string]AgentSummary
 
@@ -57,10 +56,10 @@ func (a *agents) createAgentActor(ctx *actor.Context, id, resourcePool string) (
 	if resourcePool == "" {
 		resourcePool = "default"
 	}
-	if a.cluster.Child(resourcePool) == nil {
-		return nil, errors.Errorf("cannot find specified resource pool %s for agent %s", resourcePool, id)
+	if err := sproto.ValidateRP(resourcePool); err != nil {
+		return nil, errors.Wrapf(err, "cannot find specified resource pool for agent %s", id)
 	}
-	ref, ok := ctx.ActorOf(id, &agent{resourcePool: a.cluster.Child(resourcePool)})
+	ref, ok := ctx.ActorOf(id, &agent{resourcePool: sproto.GetRP(resourcePool)})
 	if !ok {
 		return nil, errors.Errorf("agent already connected: %s", id)
 	}
