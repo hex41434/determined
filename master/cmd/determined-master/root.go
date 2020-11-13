@@ -70,9 +70,13 @@ func initializeConfig() (*internal.Config, error) {
 		return nil, err
 	}
 
+	// We add a delimiter option because by default viper uses `.`
+	// which is a commonly included in k8s configurations.
+	v := viper.NewWithOptions(viper.KeyDelimiter("::"))
+
 	// Now call viper.AllSettings() again to get the full config, containing all values from CLI flags,
 	// environment variables, and the configuration file.
-	config, err := getConfig(viper.AllSettings())
+	config, err := getConfig(v.AllSettings())
 	if err != nil {
 		return nil, err
 	}
