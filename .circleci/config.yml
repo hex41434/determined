@@ -1181,7 +1181,7 @@ jobs:
         default: "1.16.15-gke.500"
       machine-type:
         type: string
-        default: "a2-highgpu-1g"
+        default: "a2-highgpu-2g"
       num-machines:
         type: integer
         default: 1
@@ -1190,7 +1190,7 @@ jobs:
         default: "nvidia-tesla-a100"
       gpus-per-machine:
         type: integer
-        default: 1
+        default: 2
       region:
         type: string
         default: "us-central1"
@@ -1558,7 +1558,7 @@ workflows:
               parallelism: [1]
               slack-mentions: ["${SLACK_USER_ID}"]
               machine-type: ["a2-highgpu-2g"]
-              gpus-per-machine: [4]
+              gpus-per-machine: [2]
               num-machines: [2]
 
       - test-det-deploy:
