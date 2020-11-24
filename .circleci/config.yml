@@ -1190,7 +1190,7 @@ jobs:
         default: 1
       gke-version:
         type: string
-        default: "v1.18.10-gke.1500"
+        default: "1.18.10"
       machine-type:
         type: string
         default: "a2-highgpu-2g"
