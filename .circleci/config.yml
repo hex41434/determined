@@ -460,7 +460,7 @@ commands:
       - set-cluster-id:
           cluster-id: <<parameters.cluster-id>>
       - gcloud/install
-          version: 319.0.0
+          version: "319.0.0"
       - kubernetes/install-kubectl
       - gcloud/initialize:
           gcloud-service-key: <<parameters.gcloud-service-key>>
