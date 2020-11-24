@@ -441,6 +441,8 @@ commands:
         type: string
       node-locations:
         type: string
+      release-channel:
+        type: string
     steps:
       - set-cluster-id:
           cluster-id: <<parameters.cluster-id>>
@@ -456,9 +458,10 @@ commands:
             --region=<<parameters.region>> \
             --node-locations=<<parameters.node-locations>> \
             --scopes=storage-rw \
-            --image-type=UBUNTU
+            --image-type=UBUNTU \
+            --release-channel=<<parameters.release-channel>>
       - kubernetes/create-or-update-resource:
-          resource-file-path: .circleci/scripts/gpu-daemonset.yaml
+          resource-file-path: .circleci/scripts/daemonset-preloaded.yaml
       - helm/install-helm-chart:
           chart: helm/charts/determined
           helm-version: v3.2.4
@@ -1225,7 +1228,6 @@ jobs:
           gpus-per-machine: <<parameters.gpus-per-machine>>
           region: <<parameters.region>>
           node-locations: <<parameters.node-locations>>
-          accelerator: type=nvidia-tesla-a100,count=2
           release-channel: rapid
       - set-google-application-credentials
       - run-e2e-tests:
