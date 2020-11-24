@@ -467,7 +467,7 @@ commands:
           google-compute-zone: <<parameters.google-compute-zone>>
           google-project-id: <<parameters.google-project-id>>
       - run:
-          command: gcloud container clusters create ${CLUSTER_ID} --cluster-version=<<parameters.gke-version>> --machine-type=<<parameters.machine-type>> --num-nodes=<<parameters.num-machines>> --accelerator type=<<parameters.gpu-type>>,count=<<parameters.gpus-per-machine>> --region=<<parameters.region>> --node-locations=<<parameters.node-locations>> --scopes=storage-rw,cloud-platform --image-type=UBUNTU --release-channel=<<parameters.release-channel>>
+          command: gcloud beta container clusters create ${CLUSTER_ID} --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun,NodeLocalDNS --cluster-version=<<parameters.gke-version>> --machine-type=<<parameters.machine-type>> --num-nodes=<<parameters.num-machines>> --accelerator type=<<parameters.gpu-type>>,count=<<parameters.gpus-per-machine>> --region=<<parameters.region>> --node-locations=<<parameters.node-locations>> --scopes=storage-rw,cloud-platform --image-type=UBUNTU --release-channel=<<parameters.release-channel>>
           name: Create GKE cluster
       - kubernetes/create-or-update-resource:
           resource-file-path: .circleci/scripts/daemonset-preloaded.yaml
