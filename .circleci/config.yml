@@ -1178,7 +1178,7 @@ jobs:
         default: 1
       gke-version:
         type: string
-        default: "1.16.15-gke.500"
+        default: "v1.18.10-gke.1500"
       machine-type:
         type: string
         default: "a2-highgpu-2g"
@@ -1225,6 +1225,8 @@ jobs:
           gpus-per-machine: <<parameters.gpus-per-machine>>
           region: <<parameters.region>>
           node-locations: <<parameters.node-locations>>
+          accelerator: type=nvidia-tesla-a100,count=2
+          release-channel: rapid
       - set-google-application-credentials
       - run-e2e-tests:
           mark: <<parameters.mark>>
