@@ -467,10 +467,20 @@ commands:
           google-compute-zone: <<parameters.google-compute-zone>>
           google-project-id: <<parameters.google-project-id>>
       - run:
-          command: gcloud beta container clusters create ${CLUSTER_ID} --enable-stackdriver-kubernetes --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun,NodeLocalDNS --cluster-version=<<parameters.gke-version>> --machine-type=<<parameters.machine-type>> --num-nodes=<<parameters.num-machines>> --accelerator type=<<parameters.gpu-type>>,count=<<parameters.gpus-per-machine>> --region=<<parameters.region>> --node-locations=<<parameters.node-locations>> --scopes=storage-rw,cloud-platform --image-type=UBUNTU --release-channel=<<parameters.release-channel>>
+          command: gcloud beta container clusters create ${CLUSTER_ID} --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun,NodeLocalDNS --machine-type=n1-standard-4 --cluster-version=1.18.10-gke.1500 --zone=us-central1-c --release-channel rapid --node-locations=us-central1-c --subnetwork=default --enable-stackdriver-kubernetes --scopes storage-rw,cloud-platform --num-nodes 1
           name: Create GKE cluster
-      - kubernetes/create-or-update-resource:
-          resource-file-path: .circleci/scripts/daemonset-preloaded.yaml
+      - run:
+          command: gcloud container clusters get-credentials ${CLUSTER_ID} --project determined-ai --zone us-central1-c
+          name: Get Kubeconfig
+      - run:
+          command: gcloud container node-pools create accel --project determined-ai --zone us-central1-c --cluster ${CLUSTER_ID} --num-nodes <<parameters.num-machines>> --accelerator type=<<parameters.gpu-type>>,count=<<parameters.gpus-per-machine>> --machine-type=<<parameters.machine-type>> --enable-autorepair --disk-size=100 --scopes cloud-platform --verbosity error
+          name: Create GPU node pool
+      - run:
+          command: kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/cos/daemonset-preloaded.yaml
+          name: Install NVIDIA drivers
+      - run:
+          command: kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user "$(gcloud config get-value account)"
+          name: Setup cluster role binding
       - helm/install-helm-chart:
           chart: helm/charts/determined
           helm-version: v3.2.4
