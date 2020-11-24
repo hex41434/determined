@@ -68,7 +68,6 @@ spec:
           path: /var/lib/cos-tools
       initContainers:
       - image: "cos-nvidia-installer:fixed"
-        imagePullPolicy: Never
         name: nvidia-driver-installer
         resources:
           requests:
