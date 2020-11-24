@@ -420,7 +420,7 @@ commands:
           name: Terminate GKE Cluster
           when: always
           command: |
-            gcloud container clusters delete <<parameters.cluster-id>> --quiet --region=<<parameters.region>>
+            gcloud container clusters delete <<parameters.cluster-id>> --quiet --zone=us-central1-c
 
   setup-gke-cluster:
     parameters:
@@ -467,7 +467,7 @@ commands:
           google-compute-zone: <<parameters.google-compute-zone>>
           google-project-id: <<parameters.google-project-id>>
       - run:
-          command: gcloud beta container clusters create ${CLUSTER_ID} --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun,NodeLocalDNS --machine-type=n1-standard-4 --cluster-version=1.18.10-gke.1500 --zone=us-central1-c --release-channel rapid --node-locations=us-central1-c --subnetwork=default --enable-stackdriver-kubernetes --scopes storage-rw,cloud-platform --num-nodes 1
+          command: gcloud beta container clusters create ${CLUSTER_ID} --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun,NodeLocalDNS --machine-type=n1-standard-16 --cluster-version=1.18.10-gke.1500 --zone=us-central1-c --release-channel rapid --node-locations=us-central1-c --subnetwork=default --enable-stackdriver-kubernetes --scopes storage-rw,cloud-platform --num-nodes 1
           name: Create GKE cluster
       - run:
           command: gcloud container clusters get-credentials ${CLUSTER_ID} --project determined-ai --zone us-central1-c
