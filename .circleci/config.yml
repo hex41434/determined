@@ -459,7 +459,7 @@ commands:
     steps:
       - set-cluster-id:
           cluster-id: <<parameters.cluster-id>>
-      - gcloud/install
+      - gcloud/install:
           version: "319.0.0"
       - kubernetes/install-kubectl
       - gcloud/initialize:
